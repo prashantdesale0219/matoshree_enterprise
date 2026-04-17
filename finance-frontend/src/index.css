@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900;
+  }
+}
+
+/* Custom styles for the yellow card UI */
+.yellow-card {
+  @apply bg-[#FACC15] text-slate-900 rounded-xl shadow-lg border border-yellow-400 p-6;
+}
