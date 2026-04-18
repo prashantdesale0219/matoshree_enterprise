@@ -25,14 +25,19 @@ app.use(cookieParser());
 
 // CORS Configuration
 app.use(cors({
-  origin: true, // This will reflect the request origin, making it easier to debug
+  origin: function (origin, callback) {
+    // Allow all origins in production for now to fix the issue, then restrict
+    callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 
 // Manual OPTIONS handler for Preflight (Express 5 syntax)
-app.options('/*all', cors());
+app.options('/*path', cors());
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -49,7 +54,12 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('FinancePro API is running...');
+  res.status(200).json({ status: 'ok', message: 'FinancePro API is running...' });
+});
+
+// Health check route for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
 // Error Handler Middleware
