@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, UserPlus, UserX, CheckCircle, Loader2, ArrowRight, ShieldCheck, Mail, Smartphone, Filter } from 'lucide-react';
+import { Search, UserPlus, UserX, CheckCircle, Loader2, ArrowRight, ShieldCheck, Mail, Smartphone, Filter, Bell, Send, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const UserManagement = () => {
@@ -8,6 +8,46 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
+
+  // Notification Modal State
+  const [showNotifyModal, setShowNotifyModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [notifyData, setNotifyData] = useState({ title: '', message: '' });
+  const [sending, setSending] = useState(false);
+
+  const handleNotify = (user) => {
+    setSelectedUser(user);
+    setShowNotifyModal(true);
+  };
+
+  const sendNotification = async (e) => {
+    e.preventDefault();
+    setSending(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/notifications`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}` 
+        },
+        body: JSON.stringify({
+          recipientId: selectedUser._id,
+          title: notifyData.title,
+          message: notifyData.message
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Notification sent to ${selectedUser.name}`);
+        setShowNotifyModal(false);
+        setNotifyData({ title: '', message: '' });
+      }
+    } catch (error) {
+      alert('Failed to send notification');
+    } finally {
+      setSending(false);
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
@@ -181,17 +221,26 @@ const UserManagement = () => {
                         </span>
                       </td>
                       <td className="px-8 py-6 text-right">
-                        <button 
-                          onClick={() => toggleUserStatus(user._id, user.isActive)}
-                          className={`p-4 rounded-2xl transition-all duration-300 active:scale-90 ${
-                            user.isActive 
-                              ? 'bg-red-50 text-red-500 hover:bg-red-500 hover:text-white shadow-sm shadow-red-100' 
-                              : 'bg-green-50 text-green-600 hover:bg-green-600 hover:text-white shadow-sm shadow-green-100'
-                          }`} 
-                          title={user.isActive ? "Restrict Access" : "Grant Access"}
-                        >
-                          {user.isActive ? <UserX size={20} /> : <CheckCircle size={20} />}
-                        </button>
+                        <div className="flex justify-end gap-2">
+                          <button 
+                            onClick={() => handleNotify(user)}
+                            className="p-4 rounded-2xl bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-sm shadow-blue-100"
+                            title="Send Notification"
+                          >
+                            <Bell size={20} />
+                          </button>
+                          <button 
+                            onClick={() => toggleUserStatus(user._id, user.isActive)}
+                            className={`p-4 rounded-2xl transition-all duration-300 active:scale-90 ${
+                              user.isActive 
+                                ? 'bg-red-50 text-red-500 hover:bg-red-500 hover:text-white shadow-sm shadow-red-100' 
+                                : 'bg-green-50 text-green-600 hover:bg-green-600 hover:text-white shadow-sm shadow-green-100'
+                            }`} 
+                            title={user.isActive ? "Restrict Access" : "Grant Access"}
+                          >
+                            {user.isActive ? <UserX size={20} /> : <CheckCircle size={20} />}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -212,6 +261,72 @@ const UserManagement = () => {
           )}
         </div>
       </div>
+
+      {/* Notification Modal */}
+      {showNotifyModal && (
+        <div className="fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="p-8 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 text-blue-500 rounded-2xl flex items-center justify-center">
+                  <Send size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-primary dark:text-white tracking-tight">Send Notification</h3>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">To: {selectedUser?.name}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowNotifyModal(false)}
+                className="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl transition-colors text-slate-400"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={sendNotification} className="p-8 space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Subject / Title</label>
+                <input 
+                  required
+                  type="text" 
+                  placeholder="e.g. Loan Update"
+                  value={notifyData.title}
+                  onChange={(e) => setNotifyData({...notifyData, title: e.target.value})}
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none font-bold text-primary dark:text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Message Content</label>
+                <textarea 
+                  required
+                  rows="4"
+                  placeholder="Write your message here..."
+                  value={notifyData.message}
+                  onChange={(e) => setNotifyData({...notifyData, message: e.target.value})}
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none font-bold text-primary dark:text-white resize-none"
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={sending}
+                className="w-full py-5 bg-blue-500 text-white rounded-[1.5rem] font-black tracking-[0.2em] text-xs uppercase hover:bg-blue-600 transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+              >
+                {sending ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <>
+                    <Send size={18} />
+                    Send Alert Now
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

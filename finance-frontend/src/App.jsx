@@ -9,6 +9,7 @@ import LoanApprovals from './pages/LoanApprovals';
 import LoanApply from './pages/LoanApply';
 import LoanDetails from './pages/LoanDetails';
 import Profile from './pages/Profile';
+import Notifications from './pages/Notifications';
 import MainLayout from './layouts/MainLayout';
 
 const ProtectedRoute = ({ children, role }) => {
@@ -50,6 +51,7 @@ function AppRoutes() {
         <Route path="apply" element={<LoanApply />} />
         <Route path="loan/:id" element={<LoanDetails />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="notifications" element={<Notifications />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

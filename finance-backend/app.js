@@ -51,6 +51,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/loans', require('./routes/loanRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // Root route
 app.get('/', (req, res) => {

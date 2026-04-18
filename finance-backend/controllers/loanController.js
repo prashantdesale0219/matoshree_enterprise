@@ -21,7 +21,9 @@ const applyLoan = async (req, res) => {
       preferredRepaymentDay, 
       bankName, 
       bankAccountNo, 
-      centreGroupNos 
+      centreGroupNos,
+      aadharFront,
+      aadharBack
     } = req.body;
 
     // Map frontend fields to backend model fields
@@ -43,6 +45,8 @@ const applyLoan = async (req, res) => {
       bankName,
       bankAccountNo,
       centreGroupNos,
+      aadharFront,
+      aadharBack,
       status: 'pending'
     };
 

@@ -31,8 +31,21 @@ const LoanApply = () => {
     preferredRepaymentDay: 'Wednesday',
     bankName: '',
     bankAccountNo: '',
-    centreGroupNos: ''
+    centreGroupNos: '',
+    aadharFront: '',
+    aadharBack: ''
   });
+
+  const handleFileChange = (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, [field]: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     const checkEligibility = async () => {
@@ -297,14 +310,72 @@ const LoanApply = () => {
                 <input required name="bankAccountNo" value={formData.bankAccountNo} onChange={handleInputChange} type="text" placeholder="Full Account Number" className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all outline-none font-bold text-primary" />
               </div>
               <div className="md:col-span-2 space-y-4">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">KYC Document Upload</label>
-                <div className="border-4 border-dashed border-slate-50 rounded-[2.5rem] p-12 flex flex-col items-center justify-center gap-4 hover:bg-slate-50/50 hover:border-accent/20 transition-all cursor-pointer group/upload">
-                  <div className="w-20 h-20 bg-accent/10 rounded-[2rem] flex items-center justify-center text-accent group-hover/upload:scale-110 transition-transform duration-500 shadow-xl shadow-accent/5">
-                    <Upload size={32} />
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">KYC Document Upload (Aadhar Card)</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Aadhar Front */}
+                  <div className="relative">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={(e) => handleFileChange(e, 'aadharFront')} 
+                      className="hidden" 
+                      id="aadharFront"
+                    />
+                    <label 
+                      htmlFor="aadharFront"
+                      className={`border-4 border-dashed rounded-[2.5rem] p-8 flex flex-col items-center justify-center gap-3 transition-all cursor-pointer group/upload ${
+                        formData.aadharFront ? 'border-green-100 bg-green-50/30' : 'border-slate-50 hover:bg-slate-50/50 hover:border-accent/20'
+                      }`}
+                    >
+                      {formData.aadharFront ? (
+                        <>
+                          <div className="w-16 h-16 bg-green-100 rounded-[1.5rem] flex items-center justify-center text-green-600 shadow-xl shadow-green-50">
+                            <CheckCircle2 size={28} />
+                          </div>
+                          <p className="font-black text-green-600 text-sm tracking-tight">Front Uploaded</p>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-16 h-16 bg-accent/10 rounded-[1.5rem] flex items-center justify-center text-accent group-hover/upload:scale-110 transition-transform duration-500 shadow-xl shadow-accent/5">
+                            <Upload size={28} />
+                          </div>
+                          <p className="font-black text-primary text-sm tracking-tight text-center">Upload Aadhar Front</p>
+                        </>
+                      )}
+                    </label>
                   </div>
-                  <div className="text-center">
-                    <p className="font-black text-primary text-lg tracking-tight">Capture or Upload KYC</p>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Aadhar, PAN or Voter ID</p>
+
+                  {/* Aadhar Back */}
+                  <div className="relative">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={(e) => handleFileChange(e, 'aadharBack')} 
+                      className="hidden" 
+                      id="aadharBack"
+                    />
+                    <label 
+                      htmlFor="aadharBack"
+                      className={`border-4 border-dashed rounded-[2.5rem] p-8 flex flex-col items-center justify-center gap-3 transition-all cursor-pointer group/upload ${
+                        formData.aadharBack ? 'border-green-100 bg-green-50/30' : 'border-slate-50 hover:bg-slate-50/50 hover:border-accent/20'
+                      }`}
+                    >
+                      {formData.aadharBack ? (
+                        <>
+                          <div className="w-16 h-16 bg-green-100 rounded-[1.5rem] flex items-center justify-center text-green-600 shadow-xl shadow-green-50">
+                            <CheckCircle2 size={28} />
+                          </div>
+                          <p className="font-black text-green-600 text-sm tracking-tight">Back Uploaded</p>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-16 h-16 bg-accent/10 rounded-[1.5rem] flex items-center justify-center text-accent group-hover/upload:scale-110 transition-transform duration-500 shadow-xl shadow-accent/5">
+                            <Upload size={28} />
+                          </div>
+                          <p className="font-black text-primary text-sm tracking-tight text-center">Upload Aadhar Back</p>
+                        </>
+                      )}
+                    </label>
                   </div>
                 </div>
               </div>

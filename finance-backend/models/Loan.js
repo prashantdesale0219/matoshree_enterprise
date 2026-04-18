@@ -31,6 +31,8 @@ const loanSchema = new mongoose.Schema({
   disbursementDate: { type: Date },
   
   customerImage: { type: String }, // URL to image
+  aadharFront: { type: String }, // URL to Aadhar Front image
+  aadharBack: { type: String },  // URL to Aadhar Back image
   
   status: { 
     type: String, 

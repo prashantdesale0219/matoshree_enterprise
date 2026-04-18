@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, FileText, User, LogOut, CreditCard, 
-  Users, ShieldCheck, Menu, X, ChevronRight, Bell
+  Users, ShieldCheck, Menu, X, ChevronRight, Bell, Moon, Sun
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -59,6 +59,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const userNavItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     ...(canApply ? [{ name: 'Apply Loan', path: '/apply', icon: FileText }] : []),
+    { name: 'Notifications', path: '/notifications', icon: Bell },
     { name: 'My Profile', path: '/profile', icon: User },
   ];
 
@@ -67,6 +68,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { name: 'User Management', path: '/users', icon: Users },
     { name: 'Loan Approvals', path: '/approvals', icon: CreditCard },
     { name: 'Active Loans', path: '/active-loans', icon: ShieldCheck },
+    { name: 'Notifications', path: '/notifications', icon: Bell },
+    { name: 'My Profile', path: '/profile', icon: User },
   ];
 
   const navItems = user?.role === 'admin' ? adminNavItems : userNavItems;
@@ -148,13 +151,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 };
 
 const Header = ({ toggleSidebar }) => {
-  const { user } = useAuth();
+  const { user, theme, toggleTheme } = useAuth();
   return (
-    <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 fixed top-0 right-0 left-0 lg:left-72 z-30 px-4 md:px-8 flex items-center justify-between">
+    <header className="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 fixed top-0 right-0 left-0 lg:left-72 z-30 px-4 md:px-8 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <button 
           onClick={toggleSidebar}
-          className="p-2.5 bg-slate-100 text-slate-600 rounded-xl lg:hidden hover:bg-slate-200 transition-colors"
+          className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl lg:hidden hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
         >
           <Menu size={20} />
         </button>
@@ -164,17 +167,26 @@ const Header = ({ toggleSidebar }) => {
       </div>
 
       <div className="flex items-center gap-3 md:gap-6">
-        <button className="p-2.5 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-xl transition-all relative">
-          <Bell size={20} />
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+        {/* Theme Toggle */}
+        <button 
+          onClick={toggleTheme}
+          className="p-2.5 text-slate-400 hover:text-primary dark:hover:text-secondary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
+          title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+        >
+          {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
         </button>
-        <div className="h-8 w-[1px] bg-slate-200 hidden md:block"></div>
+
+        <button className="p-2.5 text-slate-400 hover:text-primary dark:hover:text-secondary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all relative">
+          <Bell size={20} />
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+        </button>
+        <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-black text-slate-900 leading-none">{user?.name}</p>
+            <p className="text-xs font-black text-slate-900 dark:text-white leading-none">{user?.name}</p>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">Status: Active</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center font-bold text-slate-600">
+          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-700 shadow-sm flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
             {user?.name?.charAt(0)}
           </div>
         </div>
