@@ -9,8 +9,14 @@ require('dotenv').config();
 // Initialize app
 const app = express();
 
-// Connect Database
-connectDB();
+// Request Logger
+app.use((req, res, next) => {
+  if (req.url.includes('//')) {
+    req.url = req.url.replace(/\/\/+/g, '/');
+  }
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 // Middlewares
 app.use(express.json());
@@ -18,30 +24,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // CORS Configuration
-const allowedOrigins = [
-  'https://matoshree-enterprise.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000'
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      var msg = 'The CORS policy for this site does not ' +
-                'allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
+  origin: true, // This will reflect the request origin, making it easier to debug
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 
+// Manual OPTIONS handler for Preflight (Express 5 syntax)
+app.options('/*all', cors());
+
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: false, // Production me CSP issue kar sakta hai
 }));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
