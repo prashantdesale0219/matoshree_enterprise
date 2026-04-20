@@ -102,9 +102,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tighter text-white">
-                FINANCE<span className="text-secondary">PRO</span>
+                MATOSHREE<span className="text-secondary"> ENTERPRISE</span>
               </h1>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Cosmic Edition</p>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Finance Solution</p>
             </div>
           </Link>
         </div>

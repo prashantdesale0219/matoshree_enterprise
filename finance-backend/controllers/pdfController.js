@@ -33,8 +33,8 @@ const generateLoanPDF = async (req, res) => {
         </head>
         <body>
           <div class="header">
-            <div class="company-name">FinancePro Services Pvt Ltd</div>
-            <p style="font-size: 10px;">Regd. Office: Financial Tower, No-27, Mumbai - 400001</p>
+            <div class="company-name">Matoshree Enterprise</div>
+            <div class="subtitle">Finance Solution</div>
           </div>
           <div class="card-title">Loan Card - Cum Receipt</div>
           

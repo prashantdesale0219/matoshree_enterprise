@@ -15,13 +15,10 @@ const LoanReceiptCard = ({ data }) => {
         <div className="p-6 border-b border-yellow-200 bg-white">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-2xl">FP</div>
+              <div className="w-16 h-16 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-2xl">ME</div>
               <div>
-                <h1 className="text-2xl font-black text-slate-900 uppercase">FinancePro Services Pvt Ltd</h1>
-                <p className="text-[10px] font-bold text-slate-500 max-w-md">
-                  Regd. Office: Financial Tower, No-27, 3rd Floor, Mumbai - 400001. 
-                  CIN: U65923MH2024PTC123456 | PAN: AAAFP1234C
-                </p>
+                <h1 className="text-2xl font-black text-slate-900 uppercase">Matoshree Enterprise</h1>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Finance Solution</p>
               </div>
             </div>
             <div className="text-right">
@@ -214,7 +211,7 @@ const LoanReceiptCard = ({ data }) => {
             <div>
               <div className="w-full border-b-2 border-slate-900 mb-2"></div>
               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest">Authorized Signatory</p>
-              <p className="text-[8px] text-slate-500 font-bold">For FinancePro Services</p>
+              <p className="text-[8px] text-slate-500 font-bold">For Matoshree Enterprise</p>
             </div>
             <div>
               <div className="w-full border-b-2 border-slate-900 mb-2"></div>

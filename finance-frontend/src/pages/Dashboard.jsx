@@ -226,7 +226,7 @@ const Dashboard = () => {
                 ) : (
                   <div className="p-5 bg-white/5 rounded-3xl border border-white/10 space-y-3">
                     <p className="text-sm font-medium text-slate-300 leading-relaxed">
-                      Start your journey by applying for a loan with FinancePro.
+                      Start your journey by applying for a loan with Matoshree Enterprise.
                     </p>
                     <button 
                       onClick={() => navigate('/apply')}

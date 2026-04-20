@@ -55,7 +55,7 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // Root route
 app.get('/', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'FinancePro API is running...' });
+  res.status(200).json({ status: 'ok', message: 'Matoshree Enterprise API is running...' });
 });
 
 // Health check route for Render

@@ -176,9 +176,9 @@ const Login = () => {
 
           <div className="pt-6 text-center">
             <p className="text-slate-500 font-bold text-sm">
-              New to FinancePro?{' '}
-              <Link to="/register" className="text-accent hover:text-accent-dark font-black underline decoration-2 underline-offset-4">
-                Create an Account
+              New to Matoshree Enterprise?{' '}
+              <Link to="/register" className="text-secondary font-black hover:underline underline-offset-4">
+                Create Account
               </Link>
             </p>
           </div>
@@ -186,7 +186,7 @@ const Login = () => {
 
         {/* Footer Credit */}
         <div className="absolute bottom-8 left-0 right-0 text-center">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">© 2024 FinancePro Cosmic. All Rights Reserved.</p>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">© 2024 Matoshree Enterprise. All Rights Reserved.</p>
         </div>
       </div>
     </div>
