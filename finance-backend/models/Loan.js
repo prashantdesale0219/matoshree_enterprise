@@ -9,7 +9,7 @@ const loanSchema = new mongoose.Schema({
   fatherName: { type: String },
   coApplicantName: { type: String },
   address: { type: String, required: true },
-  liveLocation: { type: String },
+  liveLocation: { type: String , required: true },
   
   loanAmount: { type: Number, required: true },
   purpose: { type: String, required: true },
