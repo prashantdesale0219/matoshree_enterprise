@@ -26,6 +26,7 @@ const register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        profilePic: user.profilePic,
         token: generateToken(user._id)
       });
     }
@@ -48,6 +49,7 @@ const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        profilePic: user.profilePic,
         token: generateToken(user._id)
       });
     } else {
@@ -74,7 +76,8 @@ const getMe = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        mobile: user.mobile
+        mobile: user.mobile,
+        profilePic: user.profilePic
       });
     } else {
       res.status(404).json({ success: false, message: 'User not found' });

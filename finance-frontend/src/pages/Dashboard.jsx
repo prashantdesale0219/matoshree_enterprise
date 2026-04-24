@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  TrendingUp, Clock, CheckCircle2, Wallet, CreditCard, 
+  TrendingUp, Clock, CheckCircle2, Wallet, 
   PieChart as PieIcon, ArrowUpRight, Loader2, ArrowRight, 
   ShieldCheck, Zap, Bell, Calendar
 } from 'lucide-react';
@@ -9,13 +9,13 @@ import { useAuth } from '../context/AuthContext';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip
 } from 'recharts';
+import logo from '../assets/logo.png';
 
 const StatCard = ({ title, value, icon: Icon, color, subValue, loading, trend }) => (
-  <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-cosmic hover:shadow-2xl transition-all duration-500 group relative overflow-hidden">
-    <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-bl-[4rem] -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-700" />
+  <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
     <div className="relative z-10">
-      <div className={`w-14 h-14 rounded-2xl ${color} flex items-center justify-center text-white mb-6 shadow-lg shadow-current/20 rotate-3 group-hover:rotate-0 transition-transform duration-500`}>
-        <Icon size={28} />
+      <div className={`w-12 h-12 rounded-xl ${color} flex items-center justify-center text-white mb-6 shadow-sm rotate-3 group-hover:rotate-0 transition-transform duration-500`}>
+        <Icon size={24} />
       </div>
       <h3 className="text-slate-400 font-black text-[10px] uppercase tracking-[0.2em] mb-1">{title}</h3>
       <div className="flex flex-col gap-1">
@@ -26,7 +26,7 @@ const StatCard = ({ title, value, icon: Icon, color, subValue, loading, trend })
             <span className="text-3xl font-black text-primary tracking-tight">{value}</span>
             {subValue && (
               <span className="text-[11px] font-bold text-slate-400 mt-1 flex items-center gap-1">
-                {trend === 'up' && <ArrowUpRight size={14} className="text-green-500" />}
+                {trend === 'up' && <ArrowUpRight size={14} className="text-secondary" />}
                 {subValue}
               </span>
             )}
@@ -73,7 +73,7 @@ const Dashboard = () => {
     { name: 'Remaining', value: totalLoanAmount || 1000 },
   ];
 
-  const COLORS = ['#22c55e', '#f1f5f9'];
+  const COLORS = ['#e11d48', '#f1f5f9'];
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -81,17 +81,17 @@ const Dashboard = () => {
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-3 py-1 bg-accent/10 text-accent-dark text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-accent/10">
+            <span className="px-3 py-1 bg-slate-100 text-primary text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-slate-200">
               Personal Hub
             </span>
             <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-              <ShieldCheck size={12} className="text-green-500" />
+              <ShieldCheck size={12} className="text-secondary" />
               Verified Account
             </span>
           </div>
           <h1 className="text-4xl font-black text-primary tracking-tight">
-            Financial <span className="text-accent">Overview</span>
+            Financial <span className="text-secondary">Overview</span>
           </h1>
           <p className="text-slate-500 font-medium mt-1">Welcome back, {user.name}! Track your growth and applications.</p>
         </div>
@@ -99,9 +99,9 @@ const Dashboard = () => {
           {canApplyNewLoan ? (
             <button 
               onClick={() => navigate('/apply')}
-              className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white rounded-[1.5rem] font-black tracking-widest text-xs uppercase hover:bg-primary-light transition-all shadow-xl shadow-primary/20 active:scale-95 group"
+              className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-8 py-4 bg-secondary text-white rounded-[1.5rem] font-black tracking-widest text-xs uppercase hover:bg-secondary-dark transition-all shadow-xl shadow-secondary/20 active:scale-95 group"
             >
-              <Zap size={18} className="text-secondary" />
+              <Zap size={18} className="text-white" />
               Apply New Loan
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
@@ -111,7 +111,7 @@ const Dashboard = () => {
                 <Clock size={14} />
                 New Loan Restricted
               </div>
-              <p className="text-[9px] font-bold text-red-400 uppercase tracking-tighter pr-2">
+              <p className="text-[9px] font-bold text-secondary uppercase tracking-tighter pr-2">
                 {pendingLoan 
                   ? 'Your current application is under review' 
                   : `Pay ${activeLoan.pendingEMIs - 3} more EMIs to apply again`
@@ -128,7 +128,7 @@ const Dashboard = () => {
           title="Portfolio Status" 
           value={loans.length > 0 ? (activeLoan ? 'Active' : 'Pending') : 'No Loans'} 
           icon={CheckCircle2} 
-          color={activeLoan ? "bg-green-500" : "bg-secondary-dark"} 
+          color={activeLoan ? "bg-secondary" : "bg-primary"} 
           subValue={activeLoan ? "Regular Repayment" : "Application Under Review"}
           loading={loading}
           trend={activeLoan ? 'up' : null}
@@ -137,7 +137,7 @@ const Dashboard = () => {
           title="Total Indebtedness" 
           value={`₹${totalLoanAmount.toLocaleString()}`} 
           icon={Wallet} 
-          color="bg-accent" 
+          color="bg-primary" 
           subValue={`${loans.length} Application(s) filed`}
           loading={loading}
         />
@@ -153,11 +153,11 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Repayment Progress Chart */}
-        <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-cosmic overflow-hidden">
+        <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-xl font-black text-primary tracking-tight flex items-center gap-2">
-                <PieIcon size={24} className="text-accent" />
+                <PieIcon size={24} className="text-secondary" />
                 Repayment Journey
               </h3>
               <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Principal & Interest analytics</p>
@@ -192,7 +192,7 @@ const Dashboard = () => {
           </div>
           <div className="flex justify-center gap-8 mt-4">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full" />
+              <div className="w-3 h-3 bg-secondary rounded-full" />
               <span className="text-xs font-bold text-slate-500">Paid: ₹0</span>
             </div>
             <div className="flex items-center gap-2">
@@ -204,7 +204,7 @@ const Dashboard = () => {
 
         {/* Action & Info Card */}
         <div className="space-y-6">
-          <div className="bg-primary rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group h-full flex flex-col justify-between">
+          <div className="bg-primary rounded-[2rem] p-8 text-white shadow-xl relative overflow-hidden group h-full flex flex-col justify-between">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
             
             <div className="relative z-10">
@@ -214,7 +214,7 @@ const Dashboard = () => {
               </h3>
               <div className="space-y-4">
                 {loans.length > 0 ? (
-                  <div className="p-5 bg-white/5 rounded-3xl border border-white/10 space-y-3">
+                  <div className="p-5 bg-white/5 rounded-2xl border border-white/10 space-y-3">
                     <p className="text-sm font-medium text-slate-300 leading-relaxed">
                       You have <span className="text-secondary font-black">{loans.filter(l => l.status === 'pending').length}</span> pending applications.
                     </p>
@@ -224,7 +224,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="p-5 bg-white/5 rounded-3xl border border-white/10 space-y-3">
+                  <div className="p-5 bg-white/5 rounded-2xl border border-white/10 space-y-3">
                     <p className="text-sm font-medium text-slate-300 leading-relaxed">
                       Start your journey by applying for a loan with Matoshree Enterprise.
                     </p>
@@ -240,8 +240,8 @@ const Dashboard = () => {
             </div>
 
             <div className="relative z-10 pt-10">
-              <div className="flex items-center gap-4 p-4 bg-accent/20 rounded-2xl border border-accent/20">
-                <div className="p-2 bg-accent rounded-xl">
+              <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                <div className="p-2 bg-secondary rounded-lg text-white">
                   <Bell size={20} />
                 </div>
                 <div>
@@ -255,11 +255,11 @@ const Dashboard = () => {
       </div>
 
       {/* Loan Table Section */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-cosmic overflow-hidden">
+      <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-8 border-b border-slate-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-black text-primary tracking-tight flex items-center gap-3">
-              <div className="p-2.5 bg-accent/10 text-accent rounded-2xl">
+              <div className="p-2.5 bg-slate-50 text-primary rounded-xl">
                 <Calendar size={24} />
               </div>
               Loan Accounts
@@ -287,7 +287,7 @@ const Dashboard = () => {
                   >
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-slate-500 group-hover:bg-accent group-hover:text-white transition-all duration-300">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                           {loan.loanType?.charAt(0)}
                         </div>
                         <div>
@@ -297,32 +297,42 @@ const Dashboard = () => {
                       </div>
                     </td>
                     <td className="px-8 py-6 text-center">
-                      <p className="font-black text-primary text-sm tracking-tight">₹{loan.loanAmount?.toLocaleString()}</p>
+                      <p className="font-black text-primary tracking-tight">₹{loan.loanAmount.toLocaleString()}</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{loan.tenureMonths} Months Tenure</p>
                     </td>
-                    <td className="px-8 py-6 text-center">
-                      <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] shadow-sm ${
-                        loan.status === 'approved' ? 'bg-green-100 text-green-700' : 
-                        loan.status === 'pending' ? 'bg-secondary/20 text-secondary-dark border border-secondary/20' : 
-                        'bg-red-100 text-red-700'
-                      }`}>
-                        {loan.status}
-                      </span>
+                    <td className="px-8 py-6">
+                      <div className="flex justify-center">
+                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                          loan.status === 'approved' 
+                            ? 'bg-secondary/5 text-secondary border-secondary/20' 
+                            : loan.status === 'pending'
+                            ? 'bg-primary/5 text-primary border-primary/20'
+                            : 'bg-slate-100 text-slate-400 border-slate-200'
+                        }`}>
+                          {loan.status}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <p className="text-sm font-bold text-slate-600">{new Date(loan.createdAt).toLocaleDateString()}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mt-0.5">Timestamped</p>
+                      <p className="font-black text-primary text-sm tracking-tight">
+                        {new Date(loan.createdAt).toLocaleDateString('en-IN', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Application Date</p>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td colSpan="4" className="px-8 py-20 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
-                        <CreditCard size={32} />
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200">
+                        <Calendar size={32} />
                       </div>
-                      <p className="text-slate-400 font-bold text-sm">No active loan accounts found.</p>
-                      <button onClick={() => navigate('/apply')} className="text-accent font-black text-xs uppercase tracking-widest hover:underline">Apply Today</button>
+                      <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs">No Loan Applications Found</p>
                     </div>
                   </td>
                 </tr>

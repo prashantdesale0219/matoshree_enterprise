@@ -36,10 +36,15 @@ export const AuthProvider = ({ children }) => {
           });
           const data = await response.json();
           if (data.success) {
-            const updatedUser = { ...parsedUser, role: data.role, name: data.name };
-            setUser(updatedUser);
-            localStorage.setItem('finance_user', JSON.stringify(updatedUser));
-          } else {
+        const updatedUser = { 
+          ...parsedUser, 
+          role: data.role, 
+          name: data.name,
+          profilePic: data.profilePic 
+        };
+        setUser(updatedUser);
+        localStorage.setItem('finance_user', JSON.stringify(updatedUser));
+      } else {
             // Token might be expired
             logout();
           }
@@ -69,6 +74,7 @@ export const AuthProvider = ({ children }) => {
           email: data.email, 
           role: data.role, 
           name: data.name,
+          profilePic: data.profilePic,
           token: data.token 
         };
         setUser(userData);
@@ -87,8 +93,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('finance_user');
   };
 
+  const updateUserProfile = (updates) => {
+    setUser(prev => {
+      const updated = { ...prev, ...updates };
+      localStorage.setItem('finance_user', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, theme, toggleTheme }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUserProfile, loading, theme, toggleTheme }}>
       {!loading && children}
     </AuthContext.Provider>
   );

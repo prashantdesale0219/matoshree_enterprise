@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
     default: 'user' 
   },
   mobile: { type: String, required: true },
+  profilePic: { type: String }, // URL or Base64 of live photo
   isActive: { type: Boolean, default: true },
   lastLogin: { type: Date },
   createdAt: { type: Date, default: Date.now }

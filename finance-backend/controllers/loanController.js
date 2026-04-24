@@ -1,5 +1,6 @@
 const Loan = require('../models/Loan');
 const Installment = require('../models/Installment');
+const User = require('../models/User');
 
 // @desc    Apply for a loan
 // @route   POST /api/loans/apply
@@ -23,8 +24,12 @@ const applyLoan = async (req, res) => {
       bankAccountNo, 
       centreGroupNos,
       aadharFront,
-      aadharBack
+      aadharBack,
+      livePhoto
     } = req.body;
+
+    // Update user's profile pic with the live photo
+    await User.findByIdAndUpdate(req.user._id, { profilePic: livePhoto });
 
     // Map frontend fields to backend model fields
     const loanData = {
@@ -47,6 +52,7 @@ const applyLoan = async (req, res) => {
       centreGroupNos,
       aadharFront,
       aadharBack,
+      customerImage: livePhoto, // Save live photo as customer image
       status: 'pending'
     };
 
@@ -151,6 +157,54 @@ const approveLoan = async (req, res) => {
   }
 };
 
+// @desc    Reject loan
+// @route   PUT /api/loans/:id/reject
+const rejectLoan = async (req, res) => {
+  try {
+    const loan = await Loan.findById(req.params.id);
+    if (!loan) return res.status(404).json({ success: false, message: 'Loan not found' });
+
+    loan.status = 'rejected';
+    loan.rejectedBy = req.user._id;
+    loan.rejectedAt = Date.now();
+    
+    await loan.save();
+
+    res.json({ success: true, message: 'Loan application rejected' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Break/Close active loan
+// @route   PUT /api/loans/:id/break
+const breakLoan = async (req, res) => {
+  try {
+    const loan = await Loan.findById(req.params.id);
+    if (!loan) return res.status(404).json({ success: false, message: 'Loan not found' });
+
+    if (loan.status !== 'approved') {
+      return res.status(400).json({ success: false, message: 'Only active approved loans can be broken' });
+    }
+
+    loan.status = 'closed';
+    loan.closedAt = Date.now();
+    loan.closureReason = 'Broken/Closed by Admin';
+    
+    await loan.save();
+
+    // Mark all pending installments as 'cancelled' or similar if needed
+    await Installment.updateMany(
+      { loanId: loan._id, paidStatus: 'pending' },
+      { paidStatus: 'cancelled' }
+    );
+
+    res.json({ success: true, message: 'Loan has been broken/closed successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // @desc    Get loan by ID
 // @route   GET /api/loans/:id
 const getLoanById = async (req, res) => {
@@ -174,4 +228,4 @@ const getLoanById = async (req, res) => {
   }
 };
 
-module.exports = { applyLoan, getMyLoans, getAllLoans, approveLoan, getLoanById };
+module.exports = { applyLoan, getMyLoans, getAllLoans, approveLoan, rejectLoan, breakLoan, getLoanById };

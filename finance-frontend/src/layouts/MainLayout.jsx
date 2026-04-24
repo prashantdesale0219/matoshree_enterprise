@@ -5,6 +5,7 @@ import {
   Users, ShieldCheck, Menu, X, ChevronRight, Bell, Moon, Sun
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
 
 const SidebarItem = ({ item, isActive, onClick }) => {
   const Icon = item.icon;
@@ -14,15 +15,15 @@ const SidebarItem = ({ item, isActive, onClick }) => {
       onClick={onClick}
       className={`flex items-center justify-between px-4 py-3 rounded-xl mb-1 transition-all duration-200 group ${
         isActive 
-          ? 'bg-secondary text-primary font-bold shadow-lg shadow-secondary/20' 
+          ? 'bg-secondary text-white font-black shadow-lg shadow-secondary/10' 
           : 'text-slate-400 hover:bg-white/5 hover:text-white'
       }`}
     >
       <div className="flex items-center gap-3">
-        <Icon size={20} className={isActive ? 'text-primary' : 'group-hover:text-secondary transition-colors'} />
-        <span className="text-sm tracking-wide">{item.name}</span>
+        <Icon size={20} className={isActive ? 'text-white' : 'group-hover:text-secondary transition-colors'} />
+        <span className="text-xs font-black uppercase tracking-widest">{item.name}</span>
       </div>
-      {isActive && <ChevronRight size={16} className="text-primary" />}
+      {isActive && <ChevronRight size={14} className="text-white" />}
     </Link>
   );
 };
@@ -97,14 +98,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         {/* Sidebar Header */}
         <div className="p-8">
           <Link to="/dashboard" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-secondary rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform shadow-lg shadow-secondary/20">
-              <CreditCard className="text-primary font-bold" size={24} />
+            <div className="flex-shrink-0 w-10 h-10 overflow-hidden">
+              <img src={logo} alt="Matoshree Enterprise Logo" className="w-full h-full object-contain" />
             </div>
-            <div>
-              <h1 className="text-xl font-black tracking-tighter text-white">
-                MATOSHREE<span className="text-secondary"> ENTERPRISE</span>
+            <div className="min-w-0">
+              <h1 className="text-lg font-black tracking-tighter text-white leading-tight uppercase">
+                Matoshree
               </h1>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Finance Solution</p>
+              <p className="text-[9px] font-black text-secondary uppercase tracking-[0.2em]">Enterprises</p>
             </div>
           </Link>
         </div>
@@ -112,7 +113,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         {/* Navigation */}
         <nav className="flex-1 px-4 overflow-y-auto custom-scrollbar">
           <div className="mb-4 px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-            Main Menu
+            Menu
           </div>
           {navItems.map((item) => (
             <SidebarItem 
@@ -127,21 +128,25 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </nav>
 
         {/* User Profile / Logout Section */}
-        <div className="p-6 bg-primary-dark/50 border-t border-white/5">
-          <div className="flex items-center gap-3 mb-6 p-3 bg-white/5 rounded-2xl border border-white/5">
-            <div className="w-10 h-10 bg-secondary/20 rounded-xl flex items-center justify-center font-black text-secondary text-lg border border-secondary/20">
-              {user?.name?.charAt(0)}
+        <div className="p-6 border-t border-white/5">
+          <div className="flex items-center gap-3 mb-6 p-3 bg-white/5 rounded-xl border border-white/5">
+            <div className="w-10 h-10 bg-secondary text-white rounded-lg flex items-center justify-center font-black text-lg overflow-hidden">
+              {user?.profilePic ? (
+                <img src={user.profilePic} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.charAt(0)
+              )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white truncate">{user?.name}</p>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider capitalize">{user?.role}</p>
+              <p className="text-sm font-black text-white truncate">{user?.name}</p>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{user?.role}</p>
             </div>
           </div>
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:bg-red-500/10 hover:text-red-500 rounded-xl transition-all duration-200 font-bold text-sm"
+            className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:bg-secondary/10 hover:text-secondary rounded-xl transition-all duration-200 font-black text-[10px] uppercase tracking-widest"
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             Sign Out
           </button>
         </div>
@@ -151,43 +156,37 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 };
 
 const Header = ({ toggleSidebar }) => {
-  const { user, theme, toggleTheme } = useAuth();
+  const { user } = useAuth();
   return (
-    <header className="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 fixed top-0 right-0 left-0 lg:left-72 z-30 px-4 md:px-8 flex items-center justify-between">
+    <header className="h-16 bg-white border-b border-slate-100 fixed top-0 right-0 left-0 lg:left-72 z-30 px-4 md:px-8 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <button 
           onClick={toggleSidebar}
-          className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl lg:hidden hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+          className="p-2 text-slate-400 lg:hidden hover:bg-slate-50 rounded-lg transition-colors"
         >
           <Menu size={20} />
         </button>
-        <h2 className="hidden md:block text-sm font-bold text-slate-400 uppercase tracking-widest">
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+        <h2 className="hidden md:block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
         </h2>
       </div>
 
-      <div className="flex items-center gap-3 md:gap-6">
-        {/* Theme Toggle */}
-        <button 
-          onClick={toggleTheme}
-          className="p-2.5 text-slate-400 hover:text-primary dark:hover:text-secondary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
-          title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-        >
-          {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+      <div className="flex items-center gap-4">
+        <button className="p-2 text-slate-400 hover:text-secondary transition-all relative">
+          <Bell size={18} />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-secondary rounded-full border border-white"></span>
         </button>
-
-        <button className="p-2.5 text-slate-400 hover:text-primary dark:hover:text-secondary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all relative">
-          <Bell size={20} />
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-        </button>
-        <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pl-4 border-l border-slate-100">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-black text-slate-900 dark:text-white leading-none">{user?.name}</p>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">Status: Active</p>
+            <p className="text-[11px] font-black text-primary leading-none uppercase">{user?.name}</p>
+            <p className="text-[9px] font-black text-secondary uppercase tracking-tighter mt-1">Verified</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-700 shadow-sm flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
-            {user?.name?.charAt(0)}
+          <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-xs text-primary overflow-hidden">
+            {user?.profilePic ? (
+              <img src={user.profilePic} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              user?.name?.charAt(0)
+            )}
           </div>
         </div>
       </div>
@@ -211,7 +210,7 @@ const MainLayout = () => {
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="flex-1 flex flex-col min-w-0">
         <Header toggleSidebar={toggleSidebar} />
-        <main className="flex-1 p-4 md:p-8 mt-20 lg:ml-72 transition-all duration-300">
+        <main className="flex-1 p-4 md:p-8 mt-16 lg:ml-72 transition-all duration-300">
           <Outlet />
         </main>
       </div>

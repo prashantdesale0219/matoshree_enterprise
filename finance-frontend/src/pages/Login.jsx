@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, Loader2, CreditCard, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { Mail, Lock, Loader2, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -31,20 +32,20 @@ const Login = () => {
       <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-center p-20 text-white overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[100px] animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-secondary/10 rounded-full blur-[80px] animate-bounce duration-[10s]"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-secondary/5 rounded-full blur-[80px] animate-bounce duration-[10s]"></div>
         </div>
 
         <div className="relative z-10 space-y-10">
-          <Link to="/" className="flex items-center gap-3 group inline-block">
-            <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center rotate-6 group-hover:rotate-0 transition-transform shadow-2xl shadow-secondary/20">
-              <CreditCard className="text-primary font-black" size={32} />
+          <Link to="/" className="flex items-center gap-4 group inline-block">
+            <div className="w-24 h-24 overflow-hidden">
+              <img src={logo} alt="Matoshree Enterprise Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <h1 className="text-3xl font-black tracking-tighter">
-                FINANCE<span className="text-secondary">PRO</span>
+              <h1 className="text-4xl font-black tracking-tighter">
+                MATOSHREE<span className="text-secondary"> ENTERPRISE</span>
               </h1>
-              <p className="text-xs font-black text-slate-500 uppercase tracking-[0.3em]">Cosmic Enterprise</p>
+              <p className="text-xs font-black text-slate-500 uppercase tracking-[0.3em]">Finance Solution</p>
             </div>
           </Link>
 
@@ -60,7 +61,7 @@ const Login = () => {
 
           <div className="grid grid-cols-2 gap-8 pt-10">
             <div className="flex items-center gap-4 group">
-              <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:bg-accent/20 transition-colors">
+              <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:bg-secondary/20 transition-colors">
                 <ShieldCheck className="text-secondary" size={24} />
               </div>
               <div>
@@ -69,7 +70,7 @@ const Login = () => {
               </div>
             </div>
             <div className="flex items-center gap-4 group">
-              <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:bg-accent/20 transition-colors">
+              <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:bg-secondary/20 transition-colors">
                 <Zap className="text-secondary" size={24} />
               </div>
               <div>
@@ -83,7 +84,7 @@ const Login = () => {
         {/* Floating Credit Card Mockup */}
         <div className="absolute -bottom-20 -right-20 w-[500px] h-[300px] bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-[3rem] backdrop-blur-xl rotate-[-15deg] shadow-2xl p-10 hidden xl:block animate-in slide-in-from-right-20 duration-1000">
           <div className="flex justify-between items-start mb-20">
-            <div className="w-16 h-12 bg-secondary/80 rounded-lg"></div>
+            <div className="w-16 h-12 bg-secondary rounded-lg"></div>
             <Zap className="text-white/20" size={40} />
           </div>
           <div className="space-y-2">
@@ -97,12 +98,12 @@ const Login = () => {
       <div className="flex-1 bg-background lg:rounded-l-[4rem] flex flex-col justify-center p-8 md:p-20 relative overflow-hidden shadow-[-20px_0_50px_rgba(0,0,0,0.2)]">
         {/* Mobile Logo */}
         <div className="lg:hidden mb-12 flex justify-center">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-              <CreditCard className="text-secondary" size={24} />
+          <Link to="/" className="flex items-center gap-4">
+            <div className="w-16 h-16 overflow-hidden">
+              <img src={logo} alt="Matoshree Enterprise Logo" className="w-full h-full object-contain" />
             </div>
             <h1 className="text-2xl font-black tracking-tighter text-primary">
-              FINANCE<span className="text-accent">PRO</span>
+              MATOSHREE<span className="text-secondary"> ENTERPRISE</span>
             </h1>
           </Link>
         </div>

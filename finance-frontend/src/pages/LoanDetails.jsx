@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Loader2, ArrowLeft, CheckCircle2, AlertCircle, Phone, CreditCard, Calendar, Wallet } from 'lucide-react';
+import { Loader2, ArrowLeft, CheckCircle2, AlertCircle, Calendar, Trash2 } from 'lucide-react';
 import LoanReceiptCard from '../components/LoanReceiptCard';
 
 const LoanDetails = () => {
@@ -37,10 +37,6 @@ const LoanDetails = () => {
     }
   }, [id, user?.token]);
 
-  const handleAction = (action) => {
-    alert(`${action} action triggered successfully for Loan ID: ${id}`);
-  };
-
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -72,6 +68,28 @@ const LoanDetails = () => {
   const nextInstallment = installments.find(i => i.paidStatus === 'pending');
   const totalPaid = installments.filter(i => i.paidStatus === 'paid').length;
 
+  const handleBreakLoan = async () => {
+    if (!window.confirm('WARNING: Are you sure you want to BREAK/CLOSE this loan? All pending installments will be cancelled. This action cannot be undone.')) return;
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/loans/${id}/break`, {
+        method: 'PUT',
+        headers: { 
+          'Authorization': `Bearer ${user.token}` 
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Loan broken and closed successfully!');
+        window.location.reload();
+      } else {
+        alert(data.message || 'Failed to break loan');
+      }
+    } catch (err) {
+      alert('Server error while breaking loan');
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -88,11 +106,20 @@ const LoanDetails = () => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
+          {user?.role === 'admin' && loan.status === 'approved' && (
+            <button 
+              onClick={handleBreakLoan}
+              className="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-700 transition-all flex items-center gap-2 shadow-lg shadow-red-200"
+            >
+              <Trash2 size={14} /> Break Loan
+            </button>
+          )}
           <span className={`px-4 py-2 rounded-full text-sm font-black uppercase tracking-wider shadow-sm flex items-center gap-2 ${
             loan.status === 'approved' ? 'bg-green-100 text-green-700' : 
-            loan.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+            loan.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+            loan.status === 'closed' ? 'bg-slate-100 text-slate-700' : 'bg-red-100 text-red-700'
           }`}>
-            {loan.status === 'approved' && <CheckCircle2 size={16} />}
+            {(loan.status === 'approved' || loan.status === 'closed') && <CheckCircle2 size={16} />}
             Loan {loan.status}
           </span>
           {loan.approvedAt && (
@@ -127,35 +154,6 @@ const LoanDetails = () => {
                   <p className="text-sm font-bold">{totalPaid} / {installments.length} Paid</p>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Actions Card */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              <Wallet size={20} className="text-primary-dark" /> Quick Actions
-            </h3>
-            <div className="space-y-3">
-              {nextInstallment && (
-                <button 
-                  onClick={() => handleAction('Pay EMI')}
-                  className="w-full py-4 bg-primary hover:bg-primary-dark text-slate-900 font-black rounded-2xl transition-all shadow-xl shadow-yellow-100 flex items-center justify-center gap-2"
-                >
-                  <CreditCard size={18} /> Pay Next EMI (₹{nextInstallment.installmentAmount.toLocaleString()})
-                </button>
-              )}
-              <button 
-                onClick={() => handleAction('Foreclose')}
-                className="w-full py-4 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-2xl transition-all border border-slate-200"
-              >
-                Foreclose Loan Account
-              </button>
-              <button 
-                onClick={() => handleAction('Contact')}
-                className="w-full py-4 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-2xl transition-all border border-slate-200 flex items-center justify-center gap-2"
-              >
-                <Phone size={18} /> Contact Manager
-              </button>
             </div>
           </div>
 

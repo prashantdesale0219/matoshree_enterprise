@@ -54,8 +54,32 @@ const LoanApprovals = ({ status = 'pending' }) => {
       setShowApprovalModal(true);
     } else if (action === 'View') {
       setShowViewModal(true);
+    } else if (action === 'Reject') {
+      confirmRejection(loan._id);
     } else {
       alert(`Loan ${loan._id} ${action} action triggered!`);
+    }
+  };
+
+  const confirmRejection = async (id) => {
+    if (!window.confirm('Are you sure you want to reject this loan application?')) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/loans/${id}/reject`, {
+        method: 'PUT',
+        headers: { 
+          'Authorization': `Bearer ${user.token}` 
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Loan Rejected Successfully!');
+        setLoans(prev => prev.filter(l => l._id !== id));
+        setShowViewModal(false);
+      } else {
+        alert(data.message || 'Rejection failed');
+      }
+    } catch (error) {
+      alert('Server error during rejection');
     }
   };
 
@@ -95,146 +119,103 @@ const LoanApprovals = ({ status = 'pending' }) => {
       </div>
       <div>
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{label}</p>
-        <p className="text-sm font-bold text-slate-900">{value || 'Not provided'}</p>
+        <p className="text-sm font-bold text-primary">{value || 'Not provided'}</p>
       </div>
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 capitalize">
-            {status === 'pending' ? 'Loan Approvals' : 'Active Loan Customers'}
+          <h1 className="text-4xl font-black text-primary tracking-tight">
+            {status === 'pending' ? 'Pending' : 'Approved'} <span className="text-secondary">Loans</span>
           </h1>
-          <p className="text-slate-500">
-            {status === 'pending' 
-              ? 'Review and approve pending loan applications.' 
-              : 'View and manage all active loan accounts.'}
-          </p>
+          <p className="text-slate-500 font-medium mt-1">Review and manage loan applications in real-time.</p>
+        </div>
+        <div className="relative w-full md:w-80 group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors" size={18} />
+          <input 
+            type="text" 
+            placeholder="Search customer or ID..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-6 py-3.5 bg-white border border-slate-100 rounded-[1.25rem] focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all outline-none font-bold text-primary shadow-sm"
+          />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-yellow-100 rounded-xl text-yellow-600">
-            <Calendar size={24} />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase">Pending Review</p>
-            <p className="text-xl font-bold text-slate-900">{loans.length} Loans</p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-blue-100 rounded-xl text-blue-600">
-            <Wallet size={24} />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase">Total Amount Pending</p>
-            <p className="text-xl font-bold text-slate-900">₹{loans.reduce((sum, l) => sum + (l.loanAmount || 0), 0).toLocaleString()}</p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-green-100 rounded-xl text-green-600">
-            <CheckCircle2 size={24} />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase">System Status</p>
-            <p className="text-xl font-bold text-slate-900">Operational</p>
-          </div>
-        </div>
-      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-64 bg-slate-50 rounded-[2.5rem] animate-pulse border border-slate-100" />
+          ))
+        ) : filteredLoans.length > 0 ? (
+          filteredLoans.map((loan) => (
+            <div key={loan._id} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-cosmic hover:shadow-2xl transition-all duration-500 group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-bl-[4rem] -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-700" />
+              
+              <div className="relative z-10">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-500 overflow-hidden">
+                    {loan.customerImage ? (
+                      <img src={loan.customerImage} alt={loan.customerName} className="w-full h-full object-cover" />
+                    ) : (
+                      <User size={28} />
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Amount</p>
+                    <p className="text-xl font-black text-primary tracking-tight">₹{loan.loanAmount?.toLocaleString()}</p>
+                  </div>
+                </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-          <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Search by name or ID..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm"
-            />
-          </div>
-        </div>
-        <div className="overflow-x-auto">
-          {loading ? (
-            <div className="p-12 flex flex-col items-center justify-center gap-4">
-              <Loader2 className="animate-spin text-primary" size={40} />
-              <p className="text-slate-500 font-medium">Fetching pending applications...</p>
+                <div className="mb-8">
+                  <h3 className="text-lg font-black text-primary tracking-tight leading-tight mb-1 truncate">{loan.customerName || loan.userId?.name}</h3>
+                  <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <Calendar size={12} />
+                    Filed {new Date(loan.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 pt-6 border-t border-slate-50">
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => handleAction(loan, 'View')}
+                      className="flex-1 py-3 bg-slate-50 text-primary rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Eye size={14} /> View
+                    </button>
+                    {status === 'pending' && (
+                      <button 
+                        onClick={() => handleAction(loan, 'Reject')}
+                        className="flex-1 py-3 bg-red-50 text-red-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-100 transition-all flex items-center justify-center gap-2"
+                      >
+                        <XCircle size={14} /> Reject
+                      </button>
+                    )}
+                  </div>
+                  {status === 'pending' ? (
+                    <button 
+                      onClick={() => handleAction(loan, 'Approve')}
+                      className="w-full py-3 bg-secondary text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-secondary-dark transition-all shadow-lg shadow-secondary/10 flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle2 size={14} /> Approve Application
+                    </button>
+                  ) : (
+                    <div className="w-full py-3 bg-green-50 text-green-600 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                      <CheckCircle2 size={14} /> Active Loan
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          ) : (
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Loan Details</th>
-                  <th className="px-6 py-4">Purpose</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredLoans.length > 0 ? (
-                  filteredLoans.map((loan) => (
-                    <tr key={loan._id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div>
-                          <p className="text-sm font-bold text-slate-900">{loan.customerName || loan.userId?.name}</p>
-                          <p className="text-xs text-slate-500">{loan.userId?.email}</p>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div>
-                          <p className="text-sm font-bold text-slate-900">₹{loan.loanAmount?.toLocaleString()}</p>
-                          <p className="text-xs text-slate-500">{loan.loanType}</p>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-slate-600 truncate max-w-[150px]">{loan.purpose}</td>
-                      <td className="px-6 py-4 text-xs text-slate-500">{new Date(loan.createdAt).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 flex gap-2">
-                        <button 
-                          onClick={() => status === 'approved' ? navigate(`/loan/${loan._id}`) : handleAction(loan, 'View')}
-                          className={`p-2 rounded-lg transition-colors ${
-                            status === 'approved' ? 'bg-accent/10 text-accent hover:bg-accent/20' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                          }`}
-                          title={status === 'approved' ? "View Portfolio" : "View Documents"}
-                        >
-                          {status === 'approved' ? <FileText size={18} /> : <Eye size={18} />}
-                        </button>
-                        
-                        {status === 'pending' && (
-                          <>
-                            <button 
-                              onClick={() => handleAction(loan, 'Approve')}
-                              className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors" 
-                              title="Approve"
-                            >
-                              <CheckCircle2 size={18} />
-                            </button>
-                            <button 
-                              onClick={() => handleAction(loan, 'Reject')}
-                              className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors" 
-                              title="Reject"
-                            >
-                              <XCircle size={18} />
-                            </button>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-8 text-center text-slate-400">No matching applications found</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
+          ))
+        ) : (
+          <div className="col-span-full py-20 text-center">
+            <p className="text-slate-400 font-bold">No {status} loan applications found.</p>
+          </div>
+        )}
       </div>
 
       {/* View Details Modal */}
@@ -251,6 +232,18 @@ const LoanApprovals = ({ status = 'pending' }) => {
             </div>
             
             <div className="p-8 overflow-y-auto custom-scrollbar">
+              <div className="flex flex-col items-center mb-8 pb-8 border-b border-slate-50">
+                <div className="w-32 h-32 rounded-[2rem] bg-primary flex items-center justify-center text-white shadow-2xl rotate-3 mb-4 overflow-hidden">
+                  {selectedLoan.customerImage ? (
+                    <img src={selectedLoan.customerImage} alt={selectedLoan.customerName} className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={64} />
+                  )}
+                </div>
+                <h3 className="text-2xl font-black text-primary tracking-tight">{selectedLoan.customerName}</h3>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Application ID: {selectedLoan._id}</p>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Personal Information */}
                 <div className="space-y-4">
@@ -317,10 +310,7 @@ const LoanApprovals = ({ status = 'pending' }) => {
                   <CheckCircle2 size={20} /> Approve Application
                 </button>
                 <button 
-                  onClick={() => {
-                    alert('Rejecting application...');
-                    setShowViewModal(false);
-                  }}
+                  onClick={() => confirmRejection(selectedLoan._id)}
                   className="flex-1 py-4 bg-red-50 text-red-600 font-black uppercase tracking-widest rounded-2xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
                 >
                   <XCircle size={20} /> Reject Application

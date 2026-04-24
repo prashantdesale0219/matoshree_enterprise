@@ -9,21 +9,21 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#0f172a', // Dark Navy/Blue (Cosmic style)
-          light: '#1e293b',
-          dark: '#020617',
+          DEFAULT: '#000000', // Pure Black
+          light: '#1f2937',
+          dark: '#000000',
         },
         secondary: {
-          DEFAULT: '#facc15', // Power/Gold Yellow
-          light: '#fde047',
-          dark: '#eab308',
+          DEFAULT: '#e11d48', // Vibrant Red
+          light: '#fb7185',
+          dark: '#9f1239',
         },
         accent: {
-          DEFAULT: '#3b82f6', // Tech Blue
-          light: '#60a5fa',
-          dark: '#2563eb',
+          DEFAULT: '#64748b', // Minimal Slate
+          light: '#94a3b8',
+          dark: '#475569',
         },
-        background: '#f8fafc',
+        background: '#ffffff',
         surface: '#ffffff',
       },
       fontFamily: {

@@ -3,11 +3,15 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-white text-slate-900;
   }
 }
 
-/* Custom styles for the yellow card UI */
-.yellow-card {
-  @apply bg-[#FACC15] text-slate-900 rounded-xl shadow-lg border border-yellow-400 p-6;
+/* Custom styles for the minimal card UI */
+.minimal-card {
+  @apply bg-white text-slate-900 rounded-xl shadow-lg border border-slate-100 p-6;
+}
+
+.minimal-red-card {
+  @apply bg-secondary text-white rounded-xl shadow-lg border border-secondary p-6;
 }

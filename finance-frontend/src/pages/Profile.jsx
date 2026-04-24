@@ -91,8 +91,12 @@ const Profile = () => {
         <div className="md:col-span-1">
           <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-cosmic p-8 text-center relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-2 bg-accent opacity-20"></div>
-            <div className={`w-28 h-28 ${user?.role === 'admin' ? 'bg-accent shadow-accent/20' : 'bg-primary shadow-primary/20'} rounded-[2rem] mx-auto mb-6 flex items-center justify-center text-white text-4xl font-black shadow-xl rotate-3 group-hover:rotate-0 transition-transform duration-500`}>
-              {user?.name?.charAt(0).toUpperCase()}
+            <div className={`w-28 h-28 ${user?.role === 'admin' ? 'bg-accent shadow-accent/20' : 'bg-primary shadow-primary/20'} rounded-[2rem] mx-auto mb-6 flex items-center justify-center text-white text-4xl font-black shadow-xl rotate-3 group-hover:rotate-0 transition-transform duration-500 overflow-hidden`}>
+              {user?.profilePic ? (
+                <img src={user.profilePic} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.charAt(0).toUpperCase()
+              )}
             </div>
             <h2 className="text-2xl font-black text-primary tracking-tight mb-1">{user?.name}</h2>
             <div className="flex items-center justify-center gap-2 mb-6">

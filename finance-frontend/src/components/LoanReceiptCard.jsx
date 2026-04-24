@@ -1,6 +1,11 @@
-import { Download, Printer, CheckCircle2, PhoneCall } from 'lucide-react';
+import { Download, Printer, CheckCircle2, PhoneCall, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
 
 const LoanReceiptCard = ({ data }) => {
+  const { user } = useAuth();
+  const [downloading, setDownloading] = useState(false);
   if (!data) return null;
   const { loan, installments } = data;
 
@@ -8,21 +13,60 @@ const LoanReceiptCard = ({ data }) => {
   const totalPrincipal = installments.reduce((sum, i) => sum + i.principal, 0);
   const totalInterest = installments.reduce((sum, i) => sum + i.interest, 0);
 
+  const handleDownload = async () => {
+    try {
+      setDownloading(true);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/loans/${loan._id}/pdf`, {
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to generate PDF');
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Loan_Receipt_${loan.loanAccountNo || loan._id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error('Download error:', err);
+      if (err.message.includes('Administrator')) {
+        alert('Backend Error: PDF engine nahi chal raha. Please apna terminal (CMD/PowerShell) "Run as Administrator" karke backend start karein.');
+      } else if (err.message.includes('spawn UNKNOWN') || err.message.includes('PDF engine')) {
+        alert('Backend Error: PDF engine sahi se install nahi he. Please terminal me "npx puppeteer browsers install chrome" run karein aur backend restart karein.');
+      } else {
+        alert(`Failed to download: ${err.message}`);
+      }
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="yellow-card !p-0 overflow-hidden border-2 border-yellow-500 shadow-2xl bg-[#FFFDE7]">
+      <div className="bg-white !p-0 overflow-hidden border-2 border-primary shadow-2xl">
         {/* Top Header - Company Info */}
-        <div className="p-6 border-b border-yellow-200 bg-white">
+        <div className="p-6 border-b border-slate-100 bg-white">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-2xl">ME</div>
+              <div className="w-20 h-20 overflow-hidden">
+                <img src={logo} alt="Matoshree Enterprise Logo" className="w-full h-full object-contain" />
+              </div>
               <div>
-                <h1 className="text-2xl font-black text-slate-900 uppercase">Matoshree Enterprise</h1>
+                <h1 className="text-2xl font-black text-primary uppercase">Matoshree Enterprise</h1>
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Finance Solution</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Branch Address</p>
+              <p className="text-[10px] font-black text-primary uppercase tracking-widest">Branch Address</p>
               <p className="text-xs font-bold text-slate-600">4430 - LIMBAYAT, SURAT</p>
               <p className="text-xs font-medium text-slate-500">Toll Free: 1800 3010 2121</p>
             </div>
@@ -30,7 +74,7 @@ const LoanReceiptCard = ({ data }) => {
         </div>
 
         {/* LOAN CARD - CUM RECEIPT Header */}
-        <div className="bg-slate-900 text-white py-2 text-center">
+        <div className="bg-primary text-white py-2 text-center">
           <h2 className="text-sm font-black tracking-[0.3em] uppercase">Loan Card - Cum Receipt</h2>
         </div>
 
@@ -39,35 +83,35 @@ const LoanReceiptCard = ({ data }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
             <div className="space-y-3">
               <div>
-                <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Customer Name & ID</p>
-                <p className="text-sm font-bold text-slate-900">{loan?.customerName || 'N/A'} ({loan?._id?.slice(-10).toUpperCase()})</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Customer Name & ID</p>
+                <p className="text-sm font-bold text-primary">{loan?.customerName || 'N/A'} ({loan?._id?.slice(-10).toUpperCase()})</p>
               </div>
               <div>
-                <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Husband/Father Name</p>
-                <p className="text-sm font-bold text-slate-900">{loan?.husbandName || 'N/A'}</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Husband/Father Name</p>
+                <p className="text-sm font-bold text-primary">{loan?.husbandName || 'N/A'}</p>
               </div>
               <div>
-                <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Customer Address</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Customer Address</p>
                 <p className="text-[11px] font-bold text-slate-700 leading-tight">
                   {loan?.address || 'N/A'}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Disb. Date</p>
-                  <p className="text-sm font-bold text-slate-900">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Disb. Date</p>
+                  <p className="text-sm font-bold text-primary">
                     {loan?.disbursementDate ? new Date(loan.disbursementDate).toLocaleDateString() : 'Pending'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Loan Amount</p>
-                  <p className="text-sm font-bold text-slate-900">₹{loan?.loanAmount?.toLocaleString()}</p>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Loan Amount</p>
+                  <p className="text-sm font-bold text-primary">₹{loan?.loanAmount?.toLocaleString()}</p>
                 </div>
               </div>
             </div>
 
             <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="w-32 h-32 rounded-xl border-4 border-white shadow-lg overflow-hidden bg-slate-200">
+              <div className="w-32 h-32 rounded-xl border-4 border-slate-50 shadow-lg overflow-hidden bg-slate-100">
                 <img 
                   src={loan?.customerImage || `https://api.dicebear.com/7.x/initials/svg?seed=${loan?.customerName}`} 
                   alt="Customer" 
@@ -75,25 +119,25 @@ const LoanReceiptCard = ({ data }) => {
                 />
               </div>
               <div className="text-center">
-                <p className="text-[9px] font-black text-slate-500 uppercase">Loan Acc No</p>
-                <p className="text-sm font-black text-primary-dark">{loan?.loanAccountNo || 'PENDING'}</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase">Loan Acc No</p>
+                <p className="text-sm font-black text-secondary">{loan?.loanAccountNo || 'PENDING'}</p>
               </div>
             </div>
 
             <div className="space-y-3 text-right md:text-left">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Mobile Number</p>
-                  <p className="text-sm font-bold text-slate-900">{loan?.mobileNumber}</p>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Mobile Number</p>
+                  <p className="text-sm font-bold text-primary">{loan?.mobileNumber}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Repayment Frequency</p>
-                  <p className="text-sm font-bold text-slate-900 capitalize">{loan?.repaymentFrequency} / {loan?.repaymentDay || 'Any'}</p>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Repayment Frequency</p>
+                  <p className="text-sm font-bold text-primary capitalize">{loan?.repaymentFrequency} / {loan?.repaymentDay || 'Any'}</p>
                 </div>
               </div>
               <div>
-                <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Purpose</p>
-                <p className="text-sm font-bold text-slate-900">{loan?.purpose}</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Purpose</p>
+                <p className="text-sm font-bold text-primary">{loan?.purpose}</p>
               </div>
               <div>
                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Annualized Int. Rate</p>
@@ -236,11 +280,21 @@ const LoanReceiptCard = ({ data }) => {
       {/* Buttons */}
       <div className="flex items-center justify-center gap-4">
         <button 
-          onClick={() => alert('Downloading Comprehensive Loan Card PDF...')}
-          className="flex items-center gap-2 px-8 py-4 bg-slate-900 text-white font-black rounded-xl hover:bg-slate-800 transition-all shadow-xl hover:-translate-y-1"
+          onClick={handleDownload}
+          disabled={downloading}
+          className="flex items-center gap-2 px-8 py-4 bg-slate-900 text-white font-black rounded-xl hover:bg-slate-800 transition-all shadow-xl hover:-translate-y-1 disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          <Download size={20} />
-          DOWNLOAD LOAN CARD
+          {downloading ? (
+            <>
+              <Loader2 size={20} className="animate-spin" />
+              GENERATING PDF...
+            </>
+          ) : (
+            <>
+              <Download size={20} />
+              DOWNLOAD LOAN CARD
+            </>
+          )}
         </button>
         <button 
           onClick={() => window.print()}
