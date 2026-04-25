@@ -2,11 +2,11 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import MainLayout from './layouts/MainLayout';
+import Landing from './pages/Landing'; // Eager load landing page
 
-// Lazy load pages
+// Lazy load other pages
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
-const Landing = lazy(() => import('./pages/Landing'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const UserManagement = lazy(() => import('./pages/UserManagement'));
@@ -16,10 +16,18 @@ const LoanDetails = lazy(() => import('./pages/LoanDetails'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Notifications = lazy(() => import('./pages/Notifications'));
 
-// Simple loading fallback
+// Better loading fallback
 const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+  <div className="flex flex-col items-center justify-center min-h-screen bg-[#fafafa]">
+    <div className="relative">
+      <div className="w-16 h-16 border-4 border-slate-100 border-t-secondary rounded-full animate-spin"></div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-8 h-8 bg-primary rounded-lg animate-pulse"></div>
+      </div>
+    </div>
+    <p className="mt-6 text-[10px] font-black text-primary uppercase tracking-[0.3em] animate-pulse">
+      Matoshree Enterprise
+    </p>
   </div>
 );
 
