@@ -58,19 +58,19 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   }, [user]);
   
   const userNavItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    ...(canApply ? [{ name: 'Apply Loan', path: '/apply', icon: FileText }] : []),
-    { name: 'Notifications', path: '/notifications', icon: Bell },
-    { name: 'My Profile', path: '/profile', icon: User },
+    { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard },
+    ...(canApply ? [{ name: 'Apply Loan', path: '/app/apply', icon: FileText }] : []),
+    { name: 'Notifications', path: '/app/notifications', icon: Bell },
+    { name: 'My Profile', path: '/app/profile', icon: User },
   ];
 
   const adminNavItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'User Management', path: '/users', icon: Users },
-    { name: 'Loan Approvals', path: '/approvals', icon: CreditCard },
-    { name: 'Active Loans', path: '/active-loans', icon: ShieldCheck },
-    { name: 'Notifications', path: '/notifications', icon: Bell },
-    { name: 'My Profile', path: '/profile', icon: User },
+    { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard },
+    { name: 'User Management', path: '/app/users', icon: Users },
+    { name: 'Loan Approvals', path: '/app/approvals', icon: CreditCard },
+    { name: 'Active Loans', path: '/app/active-loans', icon: ShieldCheck },
+    { name: 'Notifications', path: '/app/notifications', icon: Bell },
+    { name: 'My Profile', path: '/app/profile', icon: User },
   ];
 
   const navItems = user?.role === 'admin' ? adminNavItems : userNavItems;
@@ -97,16 +97,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       } border-r border-white/5 flex flex-col`}>
         {/* Sidebar Header */}
         <div className="p-8">
-          <Link to="/dashboard" className="flex items-center gap-3 group">
-            <div className="flex-shrink-0 w-10 h-10 overflow-hidden">
-              <img src={logo} alt="Matoshree Enterprise Logo" className="w-full h-full object-contain" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-lg font-black tracking-tighter text-white leading-tight uppercase">
-                Matoshree
-              </h1>
-              <p className="text-[9px] font-black text-secondary uppercase tracking-[0.2em]">Enterprises</p>
-            </div>
+          <Link to="/" className="flex items-center gap-3 group">
+            <img src={logo} alt="Matoshree" className="h-10 w-10 object-contain rounded-xl shadow-lg transition-transform group-hover:scale-110" />
+            <span className="text-xl font-black text-white tracking-tighter">MATOSHREE</span>
           </Link>
         </div>
 

@@ -6,6 +6,7 @@ import MainLayout from './layouts/MainLayout';
 // Lazy load pages
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
+const Landing = lazy(() => import('./pages/Landing'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const UserManagement = lazy(() => import('./pages/UserManagement'));
@@ -42,10 +43,11 @@ function AppRoutes() {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
         <Route path="/register" element={user ? <Navigate to="/dashboard" replace /> : <Register />} />
         
-        <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+        <Route path="/app" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           
           {/* Role-based Dashboard */}
@@ -64,6 +66,16 @@ function AppRoutes() {
           <Route path="profile" element={<Profile />} />
           <Route path="notifications" element={<Notifications />} />
         </Route>
+
+        {/* Support legacy paths by redirecting to /app/... */}
+        <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+        <Route path="/users" element={<Navigate to="/app/users" replace />} />
+        <Route path="/approvals" element={<Navigate to="/app/approvals" replace />} />
+        <Route path="/active-loans" element={<Navigate to="/app/active-loans" replace />} />
+        <Route path="/apply" element={<Navigate to="/app/apply" replace />} />
+        <Route path="/loan/:id" element={<Navigate to="/app/loan/:id" replace />} />
+        <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+        <Route path="/notifications" element={<Navigate to="/app/notifications" replace />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
